@@ -35,7 +35,7 @@ export async function middleware(req: NextRequest) {
     path.startsWith("/settings");
 
   const isCallback =
-    path.startsWith("/auth/callback") || path.startsWith("/api/auth");
+    path.startsWith("/callback") || path.startsWith("/api/auth");
 
   // ⚠️ callback НЕ чіпаємо
   if (isCallback) return res;
