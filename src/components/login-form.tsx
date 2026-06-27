@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/src/components/ui/login/card";
+} from "@/src/components/ui/card";
 import {
   Field,
   FieldDescription,
