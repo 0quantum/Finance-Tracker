@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
 
   if (code) {
-    const cookieStore = await cookies();
+    const cookieStore = await cookies(); // ✅ FIX
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,7 +24,12 @@ export async function GET(request: Request) {
       }
     );
 
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      console.log("Auth error:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
   return NextResponse.redirect(new URL("/dashboard", request.url));
