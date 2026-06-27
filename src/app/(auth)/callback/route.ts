@@ -24,7 +24,11 @@ export async function GET(request: Request) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
+            response.cookies.set(name, value, {
+              ...options,
+              secure: true,
+              path: "/",
+            });
           });
         },
       },
@@ -34,6 +38,7 @@ export async function GET(request: Request) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
+    console.error("Auth error:", error);
     return NextResponse.redirect(new URL("/login", url.origin));
   }
 
