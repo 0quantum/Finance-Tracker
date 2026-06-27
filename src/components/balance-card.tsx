@@ -17,7 +17,7 @@ export function BalanceCard({
   const isPositive = change >= 0;
 
   return (
-    <Card className="p-5 rounded-2xl border bg-white dark:bg-zinc-950 shadow-sm">
+    <Card className="p-5 rounded-2xl border bg-white dark:bg-muted 50 shadow-sm">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{title}</p>
 
