@@ -14,7 +14,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/src/components/ui/field";
-import { Input } from "@/src/components/ui/register/input";
+import { Input } from "@/src/components/ui/input";
 
 export function SignupForm({
   className,
