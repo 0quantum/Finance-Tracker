@@ -13,7 +13,7 @@ import {
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/src/components/ui/login/field";
+} from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/login/input";
 
 export function LoginForm({
