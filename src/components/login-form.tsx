@@ -1,5 +1,5 @@
 "use client";
-import { signInWithGoogle } from "@/src/features/auth/signInWithGoogle";
+import { signInWithGoogle } from "@/features/auth/signInWithGoogle";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/src/components/ui/login/button";

@@ -15,74 +15,40 @@ export default function SidebarDemo() {
   const [open, setOpen] = useState(false);
 
   const links = [
-    {
-      label: "Dashboard",
-      href: "/",
-      icon: (
-        <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Profile",
-      href: "/profile",
-      icon: (
-        <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      icon: (
-        <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Logout",
-      href: "#",
-      icon: (
-        <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
+    { label: "Dashboard", href: "/", icon: <IconBrandTabler className="h-5 w-5" /> },
+    { label: "Profile", href: "/profile", icon: <IconUserBolt className="h-5 w-5" /> },
+    { label: "Settings", href: "/settings", icon: <IconSettings className="h-5 w-5" /> },
+    { label: "Logout", href: "#", icon: <IconArrowLeft className="h-5 w-5" /> },
   ];
 
   return (
-    <div
-      className={cn(
-        "flex h-full w-full flex-col overflow-hidden border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-      )}
-    >
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-            {open ? <Logo /> : <LogoIcon />}
+    <Sidebar open={open} setOpen={setOpen}>
+      <SidebarBody className="justify-between gap-10">
+        <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+          {open ? <Logo /> : <LogoIcon />}
 
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
+          <div className="mt-8 flex flex-col gap-2">
+            {links.map((link, idx) => (
+              <SidebarLink key={idx} link={link} />
+            ))}
           </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Manu Arora",
-                href: "#",
-                icon: (
-                  <img
-                    src="https://assets.aceternity.com/manu.png"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-      </Sidebar>
-      <Dashboard />
-    </div>
+        </div>
+
+        <SidebarLink
+          link={{
+            label: "Manu Arora",
+            href: "#",
+            icon: (
+              <img
+                src="https://assets.aceternity.com/manu.png"
+                className="h-7 w-7 rounded-full"
+                alt="Avatar"
+              />
+            ),
+          }}
+        />
+      </SidebarBody>
+    </Sidebar>
   );
 }
 export const Logo = () => {
