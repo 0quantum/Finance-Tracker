@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -9,7 +9,7 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import Dashboard from "./dashboard";
+import Dashboard from "../../app/(dashboard)/dashboard/page";
 
 export default function SidebarDemo() {
   const [open, setOpen] = useState(false);
