@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+
   const path = req.nextUrl.pathname;
 
   const supabase = createServerClient(
@@ -11,6 +12,7 @@ export async function middleware(req: NextRequest) {
     {
       cookies: {
         getAll: () => req.cookies.getAll(),
+
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             res.cookies.set(name, value, options);
@@ -35,12 +37,15 @@ export async function middleware(req: NextRequest) {
   const isCallback =
     path.startsWith("/auth/callback") || path.startsWith("/api/auth");
 
+  // ⚠️ callback НЕ чіпаємо
   if (isCallback) return res;
 
+  // 🔐 неавторизований → login
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  // 🔁 авторизований → не пускаємо на login/register
   if (user && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
@@ -48,7 +53,6 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-/* 👇 ОЦЕ ДОДАЄТЬСЯ ВНИЗ ФАЙЛА */
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
