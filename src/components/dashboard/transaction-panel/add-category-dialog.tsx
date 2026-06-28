@@ -7,8 +7,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
-import { Field, FieldGroup, FieldLabel } from "@/src/components/ui/field";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, X, Check } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase/browser";
 
@@ -28,6 +27,126 @@ type Props = {
   onClose: () => void;
   onCreated: () => void;
 };
+
+// ── inline row editor ────────────────────────────────────────────
+
+type EditableTransaction = {
+  id: string;
+  description: string | null;
+  amount: number;
+  date: string;
+};
+
+export function EditTransactionRow({
+  tx,
+  onSave,
+  onDelete,
+}: {
+  tx: EditableTransaction;
+  onSave: (id: string, patch: Partial<EditableTransaction>) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [desc, setDesc] = useState(tx.description ?? "");
+  const [amount, setAmount] = useState(String(tx.amount));
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    await onSave(tx.id, {
+      description: desc.trim() || null,
+      amount: parseFloat(amount) || tx.amount,
+    });
+    setSaving(false);
+    setEditing(false);
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    await onDelete(tx.id);
+    setDeleting(false);
+  };
+
+  const time = new Date(tx.date).toLocaleDateString("uk-UA", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (editing) {
+    return (
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2.5">
+        <Input
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          placeholder="Опис"
+          className="h-7 text-xs"
+        />
+        <Input
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Сума"
+          type="text"
+          inputMode="decimal"
+          className="h-7 text-xs"
+        />
+        <div className="flex gap-1.5">
+          <button
+            onClick={() => setEditing(false)}
+            className="flex-1 rounded-lg border py-1 text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1"
+          >
+            <X className="h-3 w-3" /> Скасувати
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 rounded-lg bg-foreground text-background py-1 text-xs font-medium hover:opacity-90 transition-all flex items-center justify-center gap-1 disabled:opacity-50"
+          >
+            {saving
+              ? <Loader2 className="h-3 w-3 animate-spin" />
+              : <Check className="h-3 w-3" />
+            }
+            Зберегти
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="group flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-muted/50 transition-colors">
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-xs font-medium">
+          {tx.description || <span className="text-muted-foreground/50">Без опису</span>}
+        </p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">{time}</p>
+      </div>
+      <p className="shrink-0 text-xs font-semibold tabular-nums">${tx.amount.toFixed(2)}</p>
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={() => setEditing(true)}
+          className="h-6 w-6 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Pencil className="h-3 w-3" />
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          className="h-6 w-6 rounded-lg hover:bg-red-500/10 flex items-center justify-center text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+        >
+          {deleting
+            ? <Loader2 className="h-3 w-3 animate-spin" />
+            : <Trash2 className="h-3 w-3" />
+          }
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── main dialog ──────────────────────────────────────────────────
 
 export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
   const [name, setName] = useState("");
@@ -59,42 +178,12 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
       return;
     }
 
-    setName("");
-    setType("expense");
-    setColor(COLORS[0]);
-    setIcon(ICONS[0]);
+    setName(""); setType("expense"); setColor(COLORS[0]); setIcon(ICONS[0]);
     onCreated();
     onClose();
   };
 
-  const handleClose = () => {
-    setError(null);
-    onClose();
-  };
-
-  // preview блок зверху
-  const preview = (
-    <div className="flex items-center gap-3 rounded-2xl border bg-muted/30 px-4 py-3">
-      <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg transition-colors"
-        style={{ backgroundColor: `${color}22` }}
-      >
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium">
-          {name.trim() || "Назва категорії"}
-        </p>
-        <p className={`text-xs mt-0.5 ${type === "income" ? "text-green-500" : "text-red-400"}`}>
-          {type === "income" ? "Дохід" : "Витрата"}
-        </p>
-      </div>
-      <div
-        className="ml-auto h-2.5 w-2.5 shrink-0 rounded-full"
-        style={{ backgroundColor: color }}
-      />
-    </div>
-  );
+  const handleClose = () => { setError(null); onClose(); };
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
@@ -104,8 +193,25 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
+
           {/* preview */}
-          {preview}
+          <div className="flex items-center gap-3 rounded-2xl border bg-muted/30 px-4 py-3">
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg"
+              style={{ backgroundColor: `${color}22` }}
+            >
+              {icon}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">
+                {name.trim() || <span className="text-muted-foreground/40">Назва категорії</span>}
+              </p>
+              <p className={`text-xs mt-0.5 ${type === "income" ? "text-green-500" : "text-red-400"}`}>
+                {type === "income" ? "Дохід" : "Витрата"}
+              </p>
+            </div>
+            <div className="ml-auto h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+          </div>
 
           {/* тип */}
           <div className="flex rounded-xl border overflow-hidden text-sm">
@@ -118,8 +224,8 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
                   "flex-1 py-2 font-medium transition-all duration-150",
                   type === t
                     ? t === "income"
-                      ? "bg-green-500 text-white shadow-sm"
-                      : "bg-red-500 text-white shadow-sm"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
                     : "text-muted-foreground hover:bg-muted",
                 ].join(" ")}
               >
@@ -130,7 +236,6 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
 
           {/* назва */}
           <Input
-            id="cat-name"
             placeholder="Назва категорії"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -181,9 +286,7 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
           </div>
 
           {error && (
-            <p className="rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-500">
-              {error}
-            </p>
+            <p className="rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-500">{error}</p>
           )}
 
           {/* кнопки */}
