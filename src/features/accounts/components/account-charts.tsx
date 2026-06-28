@@ -1,19 +1,34 @@
 "use client";
 
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis,
-  Tooltip, ResponsiveContainer, CartesianGrid,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
-import type { DailyBalance, MonthlyFlow } from "@/src/features/accounts/hooks/use-account-stats";
+import type {
+  DailyBalance,
+  MonthlyFlow,
+} from "@/src/features/accounts/hooks/use-account-stats";
 import { formatCurrency } from "@/src/features/transactions/components/form/currency-input-preview";
 
 function formatDay(str: string) {
-  return new Date(str).toLocaleDateString("uk-UA", { day: "numeric", month: "short" });
+  return new Date(str).toLocaleDateString("uk-UA", {
+    day: "numeric",
+    month: "short",
+  });
 }
 
 function formatMonth(str: string) {
   const [y, m] = str.split("-");
-  return new Date(Number(y), Number(m) - 1).toLocaleDateString("uk-UA", { month: "short" });
+  return new Date(Number(y), Number(m) - 1).toLocaleDateString("uk-UA", {
+    month: "short",
+  });
 }
 
 const tooltipStyle = {
@@ -36,11 +51,22 @@ export function BalanceChart({ data }: { data: DailyBalance[] }) {
       </p>
       <div className="h-40 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 6, right: 2, left: 2, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 6, right: 2, left: 2, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="balGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity={0.12} />
-                <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity={0} />
+                <stop
+                  offset="0%"
+                  stopColor="hsl(var(--foreground))"
+                  stopOpacity={0.12}
+                />
+                <stop
+                  offset="100%"
+                  stopColor="hsl(var(--foreground))"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -67,8 +93,11 @@ export function BalanceChart({ data }: { data: DailyBalance[] }) {
             <Tooltip
               contentStyle={tooltipStyle}
               cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
-              formatter={(v: number) => [formatCurrency(v), "Баланс"]}
-              labelFormatter={formatDay}
+              formatter={(value) => [
+                formatCurrency(Number(value) || 0),
+                "Баланс",
+              ]}
+              labelFormatter={(label) => formatDay(String(label))}
             />
             <Area
               type="monotone"
@@ -77,7 +106,11 @@ export function BalanceChart({ data }: { data: DailyBalance[] }) {
               strokeWidth={1.5}
               fill="url(#balGrad)"
               dot={false}
-              activeDot={{ r: 3, fill: "hsl(var(--foreground))", strokeWidth: 0 }}
+              activeDot={{
+                r: 3,
+                fill: "hsl(var(--foreground))",
+                strokeWidth: 0,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -96,10 +129,12 @@ export function FlowChart({ data }: { data: MonthlyFlow[] }) {
         </p>
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <span className="inline-block h-2 w-2 rounded-sm bg-green-500/70" /> Дохід
+            <span className="inline-block h-2 w-2 rounded-sm bg-green-500/70" />{" "}
+            Дохід
           </span>
           <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <span className="inline-block h-2 w-2 rounded-sm bg-red-400/70" /> Витрати
+            <span className="inline-block h-2 w-2 rounded-sm bg-red-400/70" />{" "}
+            Витрати
           </span>
         </div>
       </div>
@@ -134,14 +169,22 @@ export function FlowChart({ data }: { data: MonthlyFlow[] }) {
             <Tooltip
               contentStyle={tooltipStyle}
               cursor={cursorStyle}
-              formatter={(v: number, name: string) => [
-                formatCurrency(v),
+              formatter={(value, name) => [
+                formatCurrency(Number(value) || 0),
                 name === "income" ? "Дохід" : "Витрати",
               ]}
-              labelFormatter={formatMonth}
+              labelFormatter={(label) => formatMonth(String(label))}
             />
-            <Bar dataKey="income" fill="hsl(142 71% 45% / 0.75)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="expense" fill="hsl(0 84% 60% / 0.75)" radius={[4, 4, 0, 0]} />
+            <Bar
+              dataKey="income"
+              fill="hsl(142 71% 45% / 0.75)"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="expense"
+              fill="hsl(0 84% 60% / 0.75)"
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
