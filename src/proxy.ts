@@ -5,7 +5,7 @@ const PROTECTED_ROUTES = ["/dashboard", "/profile", "/settings"];
 const AUTH_ROUTES = ["/login", "/register"];
 const SKIP_ROUTES = ["/_next", "/favicon.ico", "/api/auth", "/callback"];
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // статика і колбеки — не чіпаємо
