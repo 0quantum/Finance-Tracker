@@ -9,17 +9,23 @@ type OnCategoryClick = (id: string, type: "income" | "expense") => void;
 function CategoryIcon({ category }: { category: CategorySummary }) {
   if (category.icon) {
     return (
-      <span className="text-lg leading-none" role="img" aria-label={category.name}>
+      <span
+        className="text-lg leading-none"
+        role="img"
+        aria-label={category.name}
+      >
         {category.icon}
       </span>
     );
   }
   return (
-    <span className={`text-sm font-semibold ${
-      category.type === "income"
-        ? "text-green-600 dark:text-green-400"
-        : "text-red-500"
-    }`}>
+    <span
+      className={`text-sm font-semibold ${
+        category.type === "income"
+          ? "text-green-600 dark:text-green-400"
+          : "text-red-500"
+      }`}
+    >
       {category.name.slice(0, 2).toUpperCase()}
     </span>
   );
@@ -36,7 +42,7 @@ function CategoryBlock({
   onClick: OnCategoryClick;
   isSubmitting: boolean;
 }) {
-  const isIncome  = category.type === "income";
+  const isIncome = category.type === "income";
   const clickable = isValidAmount && !isSubmitting;
 
   return (
@@ -51,8 +57,8 @@ function CategoryBlock({
         clickable && isIncome
           ? "border-green-500/30 bg-green-500/5 hover:bg-green-500/10"
           : clickable
-          ? "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"
-          : "border-border bg-muted/40",
+            ? "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"
+            : "border-border bg-muted/40",
       ].join(" ")}
       style={!clickable ? { borderColor: `${category.color}33` } : undefined}
     >
@@ -67,21 +73,27 @@ function CategoryBlock({
         <p className="truncate text-[11px] sm:text-xs text-muted-foreground leading-tight">
           {category.name}
         </p>
-        <p className={`mt-0.5 text-xs sm:text-sm font-semibold tabular-nums ${
-          isIncome ? "text-green-600 dark:text-green-400" : "text-foreground"
-        }`}>
-          {isIncome ? "+" : ""}{formatCurrency(category.total)}
+        <p
+          className={`mt-0.5 text-xs sm:text-sm font-semibold tabular-nums ${
+            isIncome ? "text-green-600 dark:text-green-400" : "text-foreground"
+          }`}
+        >
+          {isIncome ? "+" : ""}
+          {formatCurrency(category.total)}
         </p>
       </div>
     </button>
   );
 }
 
-function AddCategoryBlock() {
+function AddCategoryBlock({ onClick }: { onClick: () => void }) {
   return (
-    <button className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed px-2 py-2.5 text-center transition-colors hover:bg-muted/40 w-full min-h-[80px]">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-        <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed px-2 py-2.5 text-center transition-colors hover:bg-muted/60 hover:border-solid hover:border-border cursor-pointer group w-full min-h-[80px]"
+    >
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted ">
+        <Plus className="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:rotate-90 group-hover:text-foreground" />{" "}
       </div>
       <p className="text-[11px] text-muted-foreground">Додати</p>
     </button>
@@ -95,6 +107,7 @@ function CategorySection({
   onCategoryClick,
   isSubmitting,
   showAdd,
+  onAddClick,
 }: {
   label: string;
   categories: CategorySummary[];
@@ -102,13 +115,13 @@ function CategorySection({
   onCategoryClick: OnCategoryClick;
   isSubmitting: boolean;
   showAdd?: boolean;
+  onAddClick?: () => void;
 }) {
   return (
     <div>
       <p className="mb-2 text-[10px] sm:text-[11px] font-medium uppercase tracking-wider text-muted-foreground px-0.5">
         {label}
       </p>
-      {/* мобіль: 3 col, sm+: 4 col */}
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
         {categories.map((cat) => (
           <CategoryBlock
@@ -119,14 +132,16 @@ function CategorySection({
             isSubmitting={isSubmitting}
           />
         ))}
-        {showAdd && <AddCategoryBlock />}
+        {showAdd && onAddClick && <AddCategoryBlock onClick={onAddClick} />}
       </div>
     </div>
   );
 }
 
 function SkeletonBlock() {
-  return <div className="h-[80px] sm:h-[88px] rounded-2xl bg-muted animate-pulse" />;
+  return (
+    <div className="h-[80px] sm:h-[88px] rounded-2xl bg-muted animate-pulse" />
+  );
 }
 
 type CategoryGridProps = {
@@ -136,6 +151,7 @@ type CategoryGridProps = {
   isValidAmount: boolean;
   onCategoryClick: OnCategoryClick;
   isSubmitting: boolean;
+  onAddCategory: () => void;
 };
 
 export function CategoryGrid({
@@ -145,6 +161,7 @@ export function CategoryGrid({
   isValidAmount,
   onCategoryClick,
   isSubmitting,
+  onAddCategory,
 }: CategoryGridProps) {
   if (error) return <p className="text-xs text-red-500 px-1">{error}</p>;
 
@@ -152,15 +169,20 @@ export function CategoryGrid({
     return (
       <div className="space-y-4">
         {[3, 4].map((n, si) => (
-          <div key={si} className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
-            {Array.from({ length: n }).map((_, i) => <SkeletonBlock key={i} />)}
+          <div
+            key={si}
+            className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2"
+          >
+            {Array.from({ length: n }).map((_, i) => (
+              <SkeletonBlock key={i} />
+            ))}
           </div>
         ))}
       </div>
     );
   }
 
-  const income  = categories.filter((c) => c.type === "income");
+  const income = categories.filter((c) => c.type === "income");
   const expense = categories.filter((c) => c.type === "expense");
 
   return (
@@ -188,6 +210,7 @@ export function CategoryGrid({
         onCategoryClick={onCategoryClick}
         isSubmitting={isSubmitting}
         showAdd
+        onAddClick={onAddCategory}
       />
     </div>
   );

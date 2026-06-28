@@ -9,6 +9,7 @@ import { CategoryGrid } from "./category-grid";
 import { TransactionDetailsDialog } from "./transaction-details-dialog";
 import { TransactionDateDialog } from "./transaction-date-dialog";
 import { TransactionSettingsDialog } from "./transaction-settings-dialog";
+import { AddCategoryDialog } from "./add-category-dialog";
 
 type Props = { onTransactionAdded?: () => void };
 
@@ -25,6 +26,7 @@ export function TransactionsPanel({ onTransactionAdded }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false);
 
   const parsedAmount = parseFloat(amount.replace(",", "."));
   const isValidAmount = !isNaN(parsedAmount) && parsedAmount > 0;
@@ -89,7 +91,7 @@ export function TransactionsPanel({ onTransactionAdded }: Props) {
           />
         </div>
 
-        {/* grid — займає решту висоти */}
+        {/* grid */}
         <div className="flex-1 min-h-0 overflow-hidden">
           <CategoryGrid
             categories={categories}
@@ -98,6 +100,7 @@ export function TransactionsPanel({ onTransactionAdded }: Props) {
             isValidAmount={isValidAmount}
             onCategoryClick={handleAddToCategory}
             isSubmitting={isSubmitting}
+            onAddCategory={() => setAddCategoryOpen(true)}
           />
         </div>
       </Card>
@@ -119,6 +122,11 @@ export function TransactionsPanel({ onTransactionAdded }: Props) {
         onClose={() => setSettingsOpen(false)}
         accountId={accountId}
         onAccountChange={setAccountId}
+      />
+      <AddCategoryDialog
+        open={addCategoryOpen}
+        onClose={() => setAddCategoryOpen(false)}
+        onCreated={refresh}
       />
     </>
   );
