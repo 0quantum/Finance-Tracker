@@ -8,6 +8,7 @@ import {
   IconSettings,
   IconUserBolt,
   IconHandStop,
+  IconWallet,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { supabase } from "@/src/lib/supabase/browser";
@@ -81,6 +82,11 @@ const links = [
     icon: <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
+    label: "Рахунки",
+    href: "/accounts",
+    icon: <IconWallet className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+  },
+  {
     label: "Борги",
     href: "/debts",
     icon: <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
@@ -96,7 +102,6 @@ const links = [
     icon: <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
 ];
-
 export default function SidebarDemo() {
   const [open, setOpen] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);

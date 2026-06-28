@@ -126,21 +126,25 @@ export function EditTransactionRow({
       <p className="shrink-0 text-xs font-semibold tabular-nums">${tx.amount.toFixed(2)}</p>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
-          onClick={() => setEditing(true)}
-          className="h-6 w-6 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Pencil className="h-3 w-3" />
-        </button>
+  onClick={() => setEditing(true)}
+  aria-label="Редагувати транзакцію"
+  title="Редагувати"
+  className="h-6 w-6 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+>
+  <Pencil className="h-3 w-3" />
+</button>
         <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="h-6 w-6 rounded-lg hover:bg-red-500/10 flex items-center justify-center text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
-        >
-          {deleting
-            ? <Loader2 className="h-3 w-3 animate-spin" />
-            : <Trash2 className="h-3 w-3" />
-          }
-        </button>
+  onClick={handleDelete}
+  disabled={deleting}
+  aria-label="Видалити транзакцію"
+  title="Видалити"
+  className="h-6 w-6 rounded-lg hover:bg-red-500/10 flex items-center justify-center text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+>
+  {deleting
+    ? <Loader2 className="h-3 w-3 animate-spin" />
+    : <Trash2 className="h-3 w-3" />
+  }
+</button>
       </div>
     </div>
   );
@@ -272,6 +276,7 @@ export function AddCategoryDialog({ open, onClose, onCreated }: Props) {
                 <button
                   key={c}
                   type="button"
+                  title="color"
                   onClick={() => setColor(c)}
                   className={[
                     "h-7 w-7 rounded-full transition-all duration-150 cursor-pointer",
