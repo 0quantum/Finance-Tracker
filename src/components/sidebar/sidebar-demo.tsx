@@ -9,6 +9,7 @@ import {
   IconUserBolt,
   IconHandStop,
   IconWallet,
+  IconTrendingUp,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { supabase } from "@/src/lib/supabase/browser";
@@ -20,10 +21,21 @@ type Profile = {
   avatar_url: string | null;
 };
 
-function UserAvatar({ profile, size = 28 }: { profile: Profile | null; size?: number }) {
+function UserAvatar({
+  profile,
+  size = 28,
+}: {
+  profile: Profile | null;
+  size?: number;
+}) {
   const initials = profile?.full_name
-    ? profile.full_name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
-    : profile?.email?.[0]?.toUpperCase() ?? "?";
+    ? profile.full_name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : (profile?.email?.[0]?.toUpperCase() ?? "?");
 
   if (profile?.avatar_url) {
     return (
@@ -79,27 +91,44 @@ const links = [
   {
     label: "Dashboard",
     href: "/dashboard",
-    icon: <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+    icon: (
+      <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
   },
   {
     label: "Рахунки",
     href: "/accounts",
-    icon: <IconWallet className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+    icon: (
+      <IconWallet className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
   },
   {
     label: "Борги",
     href: "/debts",
-    icon: <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+    icon: (
+      <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
+  },
+  {
+    label: "Інвестиції",
+    href: "/investment",
+    icon: (
+      <IconTrendingUp className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
   },
   {
     label: "Профіль",
     href: "/profile",
-    icon: <IconUserBolt className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+    icon: (
+      <IconUserBolt className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
   },
   {
     label: "Налаштування",
     href: "/settings",
-    icon: <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+    icon: (
+      <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
+    ),
   },
 ];
 export default function SidebarDemo() {
@@ -121,15 +150,13 @@ export default function SidebarDemo() {
           full_name: null,
           email: user.email ?? null,
           avatar_url: null,
-        }
+        },
       );
     });
   }, []);
 
   const displayName =
-    profile?.full_name ||
-    profile?.email?.split("@")[0] ||
-    "Завантаження...";
+    profile?.full_name || profile?.email?.split("@")[0] || "Завантаження...";
 
   return (
     <Sidebar open={open} setOpen={setOpen}>
