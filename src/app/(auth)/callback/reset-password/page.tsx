@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase/browser";
+import { supabase } from "@/src/lib/supabase/browser";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   FieldLabel,
 } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
-import { Button } from "@/src/components/ui/login/button";
+import { Button } from "@/src/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 export default function ResetPasswordPage() {

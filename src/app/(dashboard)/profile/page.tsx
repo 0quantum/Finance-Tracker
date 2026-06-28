@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/browser";
+import { supabase } from "@/src/lib/supabase/browser";
 import { Card } from "@/src/components/ui/card";
 import {
   Field,
@@ -10,7 +10,7 @@ import {
   FieldDescription,
 } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
-import { Button } from "@/src/components/ui/login/button";
+import { Button } from "@/src/components/ui/button";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
 type Profile = {

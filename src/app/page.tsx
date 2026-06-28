@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
+import { siteConfig } from "@/src/config/site";
 
 export default function Home() {
-  redirect("/dashboard");
+  redirect(siteConfig.redirects.afterLogin);
 }

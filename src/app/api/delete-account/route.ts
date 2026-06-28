@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServer } from "@/lib/supabase/server";
+import { createSupabaseServer } from "@/src/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 
 export async function DELETE() {

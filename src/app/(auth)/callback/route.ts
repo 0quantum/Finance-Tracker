@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { siteConfig } from "@/src/config/site";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
 
   if (!code) {
-    return NextResponse.redirect(new URL("/login", url.origin));
+    return NextResponse.redirect(new URL(siteConfig.routes.login, url.origin));
   }
 
-  const response = NextResponse.redirect(new URL("/dashboard", url.origin));
+  const response = NextResponse.redirect(new URL(siteConfig.redirects.afterLogin, url.origin));
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
 
   if (error) {
     console.error("AUTH ERROR:", error);
-    return NextResponse.redirect(new URL("/login", url.origin));
+    return NextResponse.redirect(new URL(siteConfig.routes.login, url.origin));
   }
 
   return response;

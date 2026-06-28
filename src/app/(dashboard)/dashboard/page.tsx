@@ -1,5 +1,5 @@
-import { getDashboardSummary } from "@/lib/db/dashboard";
-import { DashboardClient } from "@/src/components/dashboard/dashboard-client";
+import { getDashboardSummary } from "@/src/lib/db/dashboard";
+import { DashboardClient } from "@/src/features/dashboard/components/dashboard-client";
 
 export default async function DashboardPage() {
   const summary = await getDashboardSummary();
@@ -9,8 +9,8 @@ export default async function DashboardPage() {
       <div className="flex flex-col gap-3 p-3 sm:p-6 md:p-8">
         <DashboardClient
           initialSummary={{
-            balance:  Number(summary?.balance  ?? 0),
-            income:   Number(summary?.income   ?? 0),
+            balance: Number(summary?.balance ?? 0),
+            income: Number(summary?.income ?? 0),
             expenses: Number(summary?.expenses ?? 0),
           }}
         />

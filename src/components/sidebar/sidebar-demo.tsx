@@ -7,9 +7,10 @@ import {
   IconBrandTabler,
   IconSettings,
   IconUserBolt,
+  IconHandStop,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
-import { supabase } from "@/lib/supabase/browser";
+import { supabase } from "@/src/lib/supabase/browser";
 import { useSidebar } from "./sidebar";
 
 type Profile = {
@@ -78,6 +79,11 @@ const links = [
     label: "Dashboard",
     href: "/dashboard",
     icon: <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+  },
+  {
+    label: "Борги",
+    href: "/debts",
+    icon: <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
     label: "Профіль",
