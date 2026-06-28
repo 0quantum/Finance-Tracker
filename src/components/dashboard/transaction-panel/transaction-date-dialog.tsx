@@ -19,8 +19,15 @@ type Props = {
   onChange: (d: Date | null) => void;
 };
 
-export function TransactionDateDialog({ open, onClose, value, onChange }: Props) {
-  const [selected, setSelected] = useState<Date | undefined>(value ?? undefined);
+export function TransactionDateDialog({
+  open,
+  onClose,
+  value,
+  onChange,
+}: Props) {
+  const [selected, setSelected] = useState<Date | undefined>(
+    value ?? undefined,
+  );
   const today = new Date();
 
   const handleConfirm = () => {
@@ -35,7 +42,12 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+    >
       <DialogContent className="max-w-sm rounded-2xl p-4">
         <DialogHeader>
           <DialogTitle className="text-base">Дата транзакції</DialogTitle>
@@ -52,8 +64,12 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
             disabled={{ after: today }}
             toDate={today}
             components={{
-              IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-              IconRight: () => <ChevronRight className="h-4 w-4" />,
+              Chevron: ({ orientation }) =>
+                orientation === "left" ? (
+                  <ChevronLeft className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                ),
             }}
             classNames={{
               root: "text-sm w-full",
@@ -73,7 +89,8 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
               nav_button_next: "",
               table: "w-full border-collapse",
               head_row: "flex w-full",
-              head_cell: "flex-1 text-center text-xs font-normal text-muted-foreground py-1",
+              head_cell:
+                "flex-1 text-center text-xs font-normal text-muted-foreground py-1",
               row: "flex w-full mt-1 gap-0.5",
               cell: "flex-1 text-center text-sm",
               day: [
@@ -89,7 +106,8 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
               ].join(" "),
               day_today: "border border-border font-semibold",
               day_outside: "text-muted-foreground/30 hover:bg-muted/50",
-              day_disabled: "text-muted-foreground/20 pointer-events-none line-through",
+              day_disabled:
+                "text-muted-foreground/20 pointer-events-none line-through",
             }}
           />
         </div>
