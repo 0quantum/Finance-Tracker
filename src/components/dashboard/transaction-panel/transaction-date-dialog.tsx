@@ -62,7 +62,7 @@ export function TransactionDateDialog({
             weekStartsOn={1}
             showOutsideDays
             disabled={{ after: today }}
-            toDate={today}
+            endMonth={today}
             components={{
               Chevron: ({ orientation }) =>
                 orientation === "left" ? (
@@ -72,43 +72,46 @@ export function TransactionDateDialog({
                 ),
             }}
             classNames={{
-              root: "text-sm w-full",
-              months: "flex flex-col w-full",
-              month: "w-full space-y-3",
-              caption: "flex justify-between items-center px-1 py-1",
-              caption_label: "text-sm font-medium capitalize",
-              nav: "flex items-center gap-1",
-              nav_button: [
-                "h-8 w-8 rounded-xl border border-border bg-background",
-                "hover:bg-muted transition-colors",
-                "flex items-center justify-center",
-                "text-muted-foreground hover:text-foreground",
-                "disabled:opacity-30 disabled:pointer-events-none",
-              ].join(" "),
-              nav_button_previous: "",
-              nav_button_next: "",
-              table: "w-full border-collapse",
-              head_row: "flex w-full",
-              head_cell:
-                "flex-1 text-center text-xs font-normal text-muted-foreground py-1",
-              row: "flex w-full mt-1 gap-0.5",
-              cell: "flex-1 text-center text-sm",
-              day: [
-                "w-full aspect-square rounded-xl text-sm",
-                "hover:bg-muted transition-colors",
-                "font-normal text-foreground",
-                "flex items-center justify-center mx-auto",
-              ].join(" "),
-              day_selected: [
-                "!bg-foreground !text-background",
-                "hover:!bg-foreground hover:!text-background",
-                "font-medium",
-              ].join(" "),
-              day_today: "border border-border font-semibold",
-              day_outside: "text-muted-foreground/30 hover:bg-muted/50",
-              day_disabled:
-                "text-muted-foreground/20 pointer-events-none line-through",
-            }}
+  root: "text-sm w-full",
+  months: "flex flex-col w-full",
+  month: "w-full space-y-3",
+  month_caption: "flex justify-between items-center px-1 py-1",
+  caption_label: "text-sm font-medium capitalize",
+  nav: "flex items-center gap-1",
+  button_previous: [
+    "h-8 w-8 rounded-xl border border-border bg-background",
+    "hover:bg-muted transition-colors",
+    "flex items-center justify-center",
+    "text-muted-foreground hover:text-foreground",
+    "disabled:opacity-30 disabled:pointer-events-none",
+  ].join(" "),
+  button_next: [
+    "h-8 w-8 rounded-xl border border-border bg-background",
+    "hover:bg-muted transition-colors",
+    "flex items-center justify-center",
+    "text-muted-foreground hover:text-foreground",
+    "disabled:opacity-30 disabled:pointer-events-none",
+  ].join(" "),
+  month_grid: "w-full border-collapse",
+  weekdays: "flex w-full",
+  weekday: "flex-1 text-center text-xs font-normal text-muted-foreground py-1",
+  week: "flex w-full mt-1 gap-0.5",
+  day: "flex-1 text-center text-sm",
+  day_button: [
+    "w-full aspect-square rounded-xl text-sm",
+    "hover:bg-muted transition-colors",
+    "font-normal text-foreground",
+    "flex items-center justify-center mx-auto",
+  ].join(" "),
+  selected: [
+    "!bg-foreground !text-background",
+    "hover:!bg-foreground hover:!text-background",
+    "font-medium rounded-xl",
+  ].join(" "),
+  today: "border border-border font-semibold rounded-xl",
+  outside: "text-muted-foreground/30",
+  disabled: "text-muted-foreground/20 pointer-events-none line-through",
+}}
           />
         </div>
 
