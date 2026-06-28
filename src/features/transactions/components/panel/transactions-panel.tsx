@@ -7,7 +7,7 @@ import { useCategorySummary } from "@/src/features/dashboard/hooks/use-category-
 import { TransactionForm } from "../form/transaction-form";
 import { CategoryGrid } from "../category-grid";
 import { TransactionDetailsDialog } from "../dialogs/transaction-details-dialog";
-import { TransactionDateDialog } from "../dialogs/transaction-date-dialog";
+import { DatePickerDialog } from "@/src/components/date-dialog";
 import { TransactionSettingsDialog } from "../dialogs/transaction-settings-dialog";
 import { AddCategoryDialog } from "../dialogs/add-category-dialog";
 
@@ -111,12 +111,15 @@ export function TransactionsPanel({ onTransactionAdded }: Props) {
         value={description}
         onChange={setDescription}
       />
-      <TransactionDateDialog
+      <DatePickerDialog
+        title="Дата транзакції"
+        maxDate={new Date()}
         open={dateOpen}
         onClose={() => setDateOpen(false)}
         value={date}
         onChange={setDate}
       />
+
       <TransactionSettingsDialog
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}

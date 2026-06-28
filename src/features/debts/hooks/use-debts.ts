@@ -45,12 +45,22 @@ export function useDebts() {
   const addDebt = async (input: NewDebtInput) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    const { error: err } = await supabase.from("debts").insert({ ...input, user_id: user.id });
+    if (!err) await fetchDebts();
+    return err;
+  };
 
-    const { error: err } = await supabase.from("debts").insert({
-      ...input,
-      user_id: user.id,
-    });
-
+  const updateDebt = async (id: string, input: NewDebtInput) => {
+    const { error: err } = await supabase
+      .from("debts")
+      .update({
+        person_name: input.person_name,
+        amount: input.amount,
+        direction: input.direction,
+        description: input.description,
+        due_date: input.due_date,
+      })
+      .eq("id", id);
     if (!err) await fetchDebts();
     return err;
   };
@@ -62,10 +72,13 @@ export function useDebts() {
   };
 
   const settleDebt = async (id: string) => {
-    const { error: err } = await supabase
-      .from("debts")
-      .update({ is_settled: true })
-      .eq("id", id);
+    const { error: err } = await supabase.from("debts").update({ is_settled: true }).eq("id", id);
+    if (!err) await fetchDebts();
+    return err;
+  };
+
+  const reopenDebt = async (id: string) => {
+    const { error: err } = await supabase.from("debts").update({ is_settled: false }).eq("id", id);
     if (!err) await fetchDebts();
     return err;
   };
@@ -76,5 +89,5 @@ export function useDebts() {
     return err;
   };
 
-  return { debts, loading, error, addDebt, addPayment, settleDebt, deleteDebt, refresh: fetchDebts };
+  return { debts, loading, error, addDebt, updateDebt, addPayment, settleDebt, reopenDebt, deleteDebt, refresh: fetchDebts };
 }
