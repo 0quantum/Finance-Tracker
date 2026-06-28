@@ -1,10 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+const PROTECTED_ROUTES = ["/dashboard", "/profile", "/settings"];
+const AUTH_ROUTES = ["/login", "/register"];
+const SKIP_ROUTES = ["/_next", "/favicon.ico", "/api/auth", "/callback"];
 
-  const path = req.nextUrl.pathname;
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // статика і колбеки — не чіпаємо
+  if (SKIP_ROUTES.some((r) => pathname.startsWith(r))) {
+    return NextResponse.next();
+  }
+
+  const res = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,7 +21,6 @@ export async function middleware(req: NextRequest) {
     {
       cookies: {
         getAll: () => req.cookies.getAll(),
-
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             res.cookies.set(name, value, options);
@@ -24,30 +32,30 @@ export async function middleware(req: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
 
-  const isAuthRoute =
-    path.startsWith("/login") || path.startsWith("/register");
+  const isAuthed = !!user && !error;
+  const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
+  const isAuthRoute = AUTH_ROUTES.some((r) => pathname.startsWith(r));
 
-  const isProtected =
-    path.startsWith("/dashboard") ||
-    path.startsWith("/profile") ||
-    path.startsWith("/settings");
-
-  const isCallback =
-    path.startsWith("/callback") || path.startsWith("/api/auth");
-
-  // ⚠️ callback НЕ чіпаємо
-  if (isCallback) return res;
-
-  // 🔐 неавторизований → login
-  if (!user && isProtected) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  // неавторизований → login, зберігаємо куди хотів потрапити
+  if (!isAuthed && isProtected) {
+    const url = new URL("/login", req.url);
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
   }
 
-  // 🔁 авторизований → не пускаємо на login/register
-  if (user && isAuthRoute) {
+  // авторизований → не пускаємо на login/register
+  if (isAuthed && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  // корінь "/" → редірект залежно від стану
+  if (pathname === "/") {
+    return NextResponse.redirect(
+      new URL(isAuthed ? "/dashboard" : "/login", req.url)
+    );
   }
 
   return res;

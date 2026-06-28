@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabase/browser";
 
-export async function signInWithGoogle() {
+export async function signInWithApple() {
   await supabase.auth.signInWithOAuth({
-    provider: "google",
+    provider: "apple",
     options: {
       redirectTo: `${window.location.origin}/callback`,
     },

@@ -1,56 +1,65 @@
 "use client";
 
-import { BalanceCard } from "./balance-card";
-import { IncomeCard } from "./income-card";
-import { ExpensesCard } from "./expenses-card";
-import { NetCard } from "./net-card";
-import { TransactionsPanel } from "./transaction-panel/transactions-panel";
+import { StatCard }            from "./stat-card";
+import { TransactionsPanel }   from "./transaction-panel/transactions-panel";
 import { useDashboardSummary } from "@/hooks/use-dashboard-summary";
 import type { DashboardSummary } from "@/types/dashboard";
 
-type DashboardClientProps = {
-  initialSummary: DashboardSummary;
-};
+type Props = { initialSummary: DashboardSummary };
 
-export function DashboardClient({ initialSummary }: DashboardClientProps) {
+export function DashboardClient({ initialSummary }: Props) {
   const { summary, refresh } = useDashboardSummary(initialSummary);
+  const net = summary.income - summary.expenses;
 
   return (
-    <>
-      {/* TOP GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-        <BalanceCard
-          title="Balance"
+    <div className="flex flex-col gap-3">
+
+      {/* stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <StatCard
+          highlighted
+          title="Баланс"
           value={`$${summary.balance.toFixed(2)}`}
           change={2.4}
-          subtitle="Compared to last month"
+          badgeVariant="positive"
+          subtitle="Порівняно з минулим місяцем"
         />
-
-        <IncomeCard
+        <StatCard
+          title="Доходи"
           value={`$${summary.income.toFixed(2)}`}
           change={3.2}
-          subtitle="This month"
+          badgeVariant="positive"
+          subtitle="Цього місяця"
         />
-
-        <ExpensesCard
+        <StatCard
+          title="Витрати"
           value={`$${summary.expenses.toFixed(2)}`}
-          change={-1.8}
-          subtitle="This month"
+          change={1.8}
+          badgeVariant="negative"
+          subtitle="Цього місяця"
         />
-
-        <NetCard
-          income={summary.income}
-          expenses={summary.expenses}
-          subtitle="This month"
+        <StatCard
+          title="Нетто"
+          value={`${net >= 0 ? "+" : "-"}$${Math.abs(net).toFixed(2)}`}
+          change={net}
+          badgeVariant="net"
+          subtitle="Цього місяця"
         />
       </div>
 
-      {/* BOTTOM GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 flex-1 min-h-0">
-        <TransactionsPanel onTransactionAdded={refresh} />
+      {/* категорії — повна ширина */}
+      <TransactionsPanel onTransactionAdded={refresh} />
 
-        <div className="rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700 min-h-[200px]" />
+      {/* два плейсхолдери */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 min-h-[180px]">
+          <p className="text-xs text-muted-foreground">Скоро тут буде графік</p>
+        </div>
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 min-h-[180px]">
+          <p className="text-xs text-muted-foreground">Скоро тут буде графік</p>
+        </div>
       </div>
-    </>
+
+    </div>
   );
 }

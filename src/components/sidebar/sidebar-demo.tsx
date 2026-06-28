@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
 import {
   IconArrowLeft,
@@ -8,18 +9,116 @@ import {
   IconUserBolt,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-import Dashboard from "../../app/(dashboard)/dashboard/page";
+import { supabase } from "@/lib/supabase/browser";
+import { useSidebar } from "./sidebar";
+
+type Profile = {
+  full_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+};
+
+function UserAvatar({ profile, size = 28 }: { profile: Profile | null; size?: number }) {
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
+    : profile?.email?.[0]?.toUpperCase() ?? "?";
+
+  if (profile?.avatar_url) {
+    return (
+      <img
+        src={profile.avatar_url}
+        alt={profile.full_name ?? "Avatar"}
+        style={{ width: size, height: size }}
+        className="rounded-full object-cover shrink-0"
+      />
+    );
+  }
+
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className="rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center shrink-0"
+    >
+      <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300">
+        {initials}
+      </span>
+    </div>
+  );
+}
+
+function LogoutButton() {
+  const { open } = useSidebar();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  };
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="flex items-center justify-start gap-2 group/sidebar py-2 w-full text-left"
+    >
+      <IconArrowLeft className="h-5 w-5 text-neutral-600 dark:text-neutral-300 shrink-0" />
+      <motion.span
+        animate={{
+          display: open ? "inline-block" : "none",
+          opacity: open ? 1 : 0,
+        }}
+        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre !p-0 !m-0"
+      >
+        Вийти
+      </motion.span>
+    </button>
+  );
+}
+
+const links = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+  },
+  {
+    label: "Профіль",
+    href: "/profile",
+    icon: <IconUserBolt className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+  },
+  {
+    label: "Налаштування",
+    href: "/settings",
+    icon: <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+  },
+];
 
 export default function SidebarDemo() {
   const [open, setOpen] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  const links = [
-    { label: "Dashboard", href: "/", icon: <IconBrandTabler className="h-5 w-5" /> },
-    { label: "Profile", href: "/profile", icon: <IconUserBolt className="h-5 w-5" /> },
-    { label: "Settings", href: "/settings", icon: <IconSettings className="h-5 w-5" /> },
-    { label: "Logout", href: "#", icon: <IconArrowLeft className="h-5 w-5" /> },
-  ];
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("full_name, email, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      setProfile(
+        data ?? {
+          full_name: null,
+          email: user.email ?? null,
+          avatar_url: null,
+        }
+      );
+    });
+  }, []);
+
+  const displayName =
+    profile?.full_name ||
+    profile?.email?.split("@")[0] ||
+    "Завантаження...";
 
   return (
     <Sidebar open={open} setOpen={setOpen}>
@@ -31,50 +130,43 @@ export default function SidebarDemo() {
             {links.map((link, idx) => (
               <SidebarLink key={idx} link={link} />
             ))}
+            <LogoutButton />
           </div>
         </div>
 
         <SidebarLink
           link={{
-            label: "Manu Arora",
-            href: "#",
-            icon: (
-              <img
-                src="https://assets.aceternity.com/manu.png"
-                className="h-7 w-7 rounded-full"
-                alt="Avatar"
-              />
-            ),
+            label: displayName,
+            href: "/profile",
+            icon: <UserAvatar profile={profile} size={28} />,
           }}
         />
       </SidebarBody>
     </Sidebar>
   );
 }
-export const Logo = () => {
-  return (
-    <a
-      href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+
+export const Logo = () => (
+  <a
+    href="/dashboard"
+    className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal"
+  >
+    <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+    <motion.span
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="font-medium whitespace-pre text-black dark:text-white"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
-      >
-        Acet Labs
-      </motion.span>
-    </a>
-  );
-};
-export const LogoIcon = () => {
-  return (
-    <a
-      href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
-    >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
-    </a>
-  );
-};
+      FinanceApp
+    </motion.span>
+  </a>
+);
+
+export const LogoIcon = () => (
+  <a
+    href="/dashboard"
+    className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal"
+  >
+    <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+  </a>
+);

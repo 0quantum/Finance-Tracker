@@ -3,68 +3,123 @@
 import { Card } from "@/src/components/ui/card";
 import { useState } from "react";
 import { useTransactions } from "@/hooks/use-transactions";
+import { useCategorySummary } from "@/hooks/use-category-summary";
 import { TransactionForm } from "./transaction-form";
-import { TransactionList } from "./transaction-list";
+import { CategoryGrid } from "./category-grid";
+import { TransactionDetailsDialog } from "./transaction-details-dialog";
+import { TransactionDateDialog } from "./transaction-date-dialog";
+import { TransactionSettingsDialog } from "./transaction-settings-dialog";
 
-type TransactionsPanelProps = {
-  onTransactionAdded?: () => void;
-};
+type Props = { onTransactionAdded?: () => void };
 
-export function TransactionsPanel({ onTransactionAdded }: TransactionsPanelProps) {
-  const { transactions, loading, error, addTransaction } = useTransactions();
+export function TransactionsPanel({ onTransactionAdded }: Props) {
+  const { addTransaction } = useTransactions();
+  const { categories, loading, error, refresh } = useCategorySummary();
+
   const [amount, setAmount] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState<Date | null>(null);
+  const [accountId, setAccountId] = useState<string | null>(null);
 
-  const handleAddTransaction = async () => {
-    if (!amount || isSubmitting) return;
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
-    setIsSubmitting(true);
+  const parsedAmount = parseFloat(amount.replace(",", "."));
+  const isValidAmount = !isNaN(parsedAmount) && parsedAmount > 0;
+
+  const handleAddToCategory = async (
+    categoryId: string,
+    type: "income" | "expense",
+  ) => {
+    if (!isValidAmount || isSubmitting) return;
+    setSubmitting(true);
+
     const result = await addTransaction({
-      amount: Number(amount),
-      type: "expense", // TODO: підставити значення з діалогу/налаштувань
+      amount: parsedAmount,
+      type,
+      category_id: categoryId,
+      description: description || undefined,
+      account_id: accountId || undefined,
+      date: date?.toISOString(),
     });
-    setIsSubmitting(false);
 
+    setSubmitting(false);
     if (result) {
       setAmount("");
+      setDescription("");
+      setDate(null);
+      refresh();
       onTransactionAdded?.();
     }
   };
 
-  const openDetailsDialog = () => {
-    // TODO: діалог з description/категорією транзакції
-  };
-
-  const openDatePicker = () => {
-    // TODO: вибір дати транзакції (поле date)
-  };
-
-  const openSettingsDialog = () => {
-    // TODO: вибір account_id / category_id / type
-  };
-
   return (
-    <Card className="flex min-h-[200px] flex-col rounded-2xl border bg-white p-5 shadow-sm dark:bg-muted">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Transactions
-        </h3>
-      </div>
+    <>
+      <Card className="flex flex-col rounded-2xl border bg-white dark:bg-muted shadow-sm p-4 sm:p-5">
+        {/* header */}
+        <div className="mb-3 flex items-center justify-between gap-2 shrink-0">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            Категорії
+          </h3>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground/70 min-w-0">
+            {description && (
+              <span className="truncate max-w-[120px]">{description}</span>
+            )}
+            {date && (
+              <span className="shrink-0">
+                {date.toLocaleDateString("uk-UA", {
+                  day: "numeric",
+                  month: "short",
+                })}
+              </span>
+            )}
+          </div>
+        </div>
 
-      <TransactionForm
-        amount={amount}
-        onAmountChange={setAmount}
-        onSubmit={handleAddTransaction}
-        onOpenDetails={openDetailsDialog}
-        onOpenDatePicker={openDatePicker}
-        onOpenSettings={openSettingsDialog}
-      />
+        {/* form */}
+        <div className="shrink-0">
+          <TransactionForm
+            amount={amount}
+            onAmountChange={setAmount}
+            onOpenDetails={() => setDetailsOpen(true)}
+            onOpenDatePicker={() => setDateOpen(true)}
+            onOpenSettings={() => setSettingsOpen(true)}
+          />
+        </div>
 
-      <TransactionList
-        transactions={transactions}
-        loading={loading}
-        error={error}
+        {/* grid — займає решту висоти */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <CategoryGrid
+            categories={categories}
+            loading={loading}
+            error={error}
+            isValidAmount={isValidAmount}
+            onCategoryClick={handleAddToCategory}
+            isSubmitting={isSubmitting}
+          />
+        </div>
+      </Card>
+
+      <TransactionDetailsDialog
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+        value={description}
+        onChange={setDescription}
       />
-    </Card>
+      <TransactionDateDialog
+        open={dateOpen}
+        onClose={() => setDateOpen(false)}
+        value={date}
+        onChange={setDate}
+      />
+      <TransactionSettingsDialog
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        accountId={accountId}
+        onAccountChange={setAccountId}
+      />
+    </>
   );
 }

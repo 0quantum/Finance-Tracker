@@ -1,6 +1,6 @@
-import { LoginForm } from "@/src/components/login-form";
+import { ForgotPasswordForm } from "@/src/components/forgot-password-form";
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-svh items-center justify-center bg-muted p-4">
       <div className="w-full max-w-sm">
@@ -10,7 +10,7 @@ export default function LoginPage() {
           </div>
           <span className="font-semibold">FinanceApp</span>
         </div>
-        <LoginForm defaultTab="login" />
+        <ForgotPasswordForm />
       </div>
     </div>
   );
