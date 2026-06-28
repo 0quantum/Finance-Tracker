@@ -8,6 +8,8 @@ import {
 } from "@/src/components/ui/dialog";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { uk } from "date-fns/locale";
 import "react-day-picker/dist/style.css";
 
 type Props = {
@@ -19,6 +21,7 @@ type Props = {
 
 export function TransactionDateDialog({ open, onClose, value, onChange }: Props) {
   const [selected, setSelected] = useState<Date | undefined>(value ?? undefined);
+  const today = new Date();
 
   const handleConfirm = () => {
     onChange(selected ?? null);
@@ -38,38 +41,55 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
           <DialogTitle className="text-base">Дата транзакції</DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center [&_.rdp]:m-0">
           <DayPicker
             mode="single"
             selected={selected}
             onSelect={setSelected}
-            locale={undefined}
+            locale={uk}
             weekStartsOn={1}
             showOutsideDays
+            disabled={{ after: today }}
+            toDate={today}
+            components={{
+              IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+              IconRight: () => <ChevronRight className="h-4 w-4" />,
+            }}
             classNames={{
-              root: "text-sm",
-              months: "flex flex-col",
-              month: "space-y-2",
-              caption: "flex justify-center items-center relative py-1",
-              caption_label: "text-sm font-medium",
+              root: "text-sm w-full",
+              months: "flex flex-col w-full",
+              month: "w-full space-y-3",
+              caption: "flex justify-between items-center px-1 py-1",
+              caption_label: "text-sm font-medium capitalize",
               nav: "flex items-center gap-1",
-              nav_button:
-                "h-7 w-7 rounded-lg border bg-transparent hover:bg-muted flex items-center justify-center transition-colors",
-              nav_button_previous: "absolute left-0",
-              nav_button_next: "absolute right-0",
+              nav_button: [
+                "h-8 w-8 rounded-xl border border-border bg-background",
+                "hover:bg-muted transition-colors",
+                "flex items-center justify-center",
+                "text-muted-foreground hover:text-foreground",
+                "disabled:opacity-30 disabled:pointer-events-none",
+              ].join(" "),
+              nav_button_previous: "",
+              nav_button_next: "",
               table: "w-full border-collapse",
-              head_row: "flex",
-              head_cell:
-                "text-muted-foreground rounded-md w-9 font-normal text-xs text-center",
-              row: "flex w-full mt-1",
-              cell: "h-9 w-9 text-center text-sm relative",
-              day:
-                "h-9 w-9 rounded-lg hover:bg-muted transition-colors font-normal aria-selected:opacity-100",
-              day_selected:
-                "bg-foreground text-background hover:bg-foreground hover:text-background font-medium",
-              day_today: "border border-border font-medium",
-              day_outside: "text-muted-foreground/40",
-              day_disabled: "text-muted-foreground/30",
+              head_row: "flex w-full",
+              head_cell: "flex-1 text-center text-xs font-normal text-muted-foreground py-1",
+              row: "flex w-full mt-1 gap-0.5",
+              cell: "flex-1 text-center text-sm",
+              day: [
+                "w-full aspect-square rounded-xl text-sm",
+                "hover:bg-muted transition-colors",
+                "font-normal text-foreground",
+                "flex items-center justify-center mx-auto",
+              ].join(" "),
+              day_selected: [
+                "!bg-foreground !text-background",
+                "hover:!bg-foreground hover:!text-background",
+                "font-medium",
+              ].join(" "),
+              day_today: "border border-border font-semibold",
+              day_outside: "text-muted-foreground/30 hover:bg-muted/50",
+              day_disabled: "text-muted-foreground/20 pointer-events-none line-through",
             }}
           />
         </div>
@@ -83,7 +103,7 @@ export function TransactionDateDialog({ open, onClose, value, onChange }: Props)
           </button>
           <button
             onClick={handleConfirm}
-            className="flex-1 rounded-xl border py-2 text-sm font-medium transition-colors hover:bg-muted"
+            className="flex-1 rounded-xl bg-foreground text-background py-2 text-sm font-medium transition-all hover:opacity-90 active:scale-95"
           >
             Підтвердити
           </button>
