@@ -1,6 +1,6 @@
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-muted px-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-muted px-4">
       <div className="w-full max-w-md">
         {children}
       </div>

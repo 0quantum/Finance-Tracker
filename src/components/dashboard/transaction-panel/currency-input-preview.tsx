@@ -75,18 +75,19 @@ export function CurrencyInput({
         placeholder={placeholder}
         type="text"
         inputMode="decimal"
+        style={{ fontSize: "16px" }} // ← додайте це
         className={`
-          w-full
-          bg-transparent
-          border-0
-          outline-none
-          ${s.text}
-          font-thin
-          tracking-tight
-          font-mono
-          placeholder:text-muted-foreground/40
-          caret-transparent
-        `}
+    w-full
+    bg-transparent
+    border-0
+    outline-none
+    ${s.text}
+    font-thin
+    tracking-tight
+    font-mono
+    placeholder:text-muted-foreground/40
+    caret-transparent
+  `}
       />
     </div>
   );

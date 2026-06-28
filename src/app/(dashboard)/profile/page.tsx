@@ -55,10 +55,10 @@ export default function ProfilePage() {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
       const { data } = await supabase
-        .from("profiles")
-        .select("full_name, email, avatar_url")
-        .eq("id", user.id)
-        .single();
+  .from("profiles")
+  .select("full_name, email, avatar_url")
+  .eq("id", user.id)
+  .maybeSingle(); // ← було .single()
 
       const p: Profile = data ?? { full_name: null, email: user.email ?? null, avatar_url: null };
       setProfile(p);
@@ -67,110 +67,129 @@ export default function ProfilePage() {
     });
   }, []);
 
-  const handleSave = async () => {
-    setError(null);
-    setSuccess(false);
-    setSaving(true);
+const handleSave = async () => {
+  setError(null);
+  setSuccess(false);
+  setSaving(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({ full_name: fullName })
-      .eq("id", user.id);
+  const { error } = await supabase
+    .from("profiles")
+    .update({ full_name: fullName })
+    .eq("id", user.id);
 
-    if (error) {
-      setError("Не вдалось зберегти. Спробуйте ще раз.");
-    } else {
-      setProfile((p) => p ? { ...p, full_name: fullName } : p);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    }
+  if (error) {
+    setError("Не вдалось зберегти. Спробуйте ще раз.");
     setSaving(false);
-  };
+    return;
+  }
+
+  // Рефетчимо актуальні дані з бази
+  const { data } = await supabase
+    .from("profiles")
+    .select("full_name, email, avatar_url")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (data) {
+    setProfile(data);
+    setFullName(data.full_name ?? "");
+  }
+
+  setSuccess(true);
+  setTimeout(() => setSuccess(false), 3000);
+  setSaving(false);
+};
 
   return (
-    <div className="flex flex-col gap-3 p-3 md:p-4 overflow-y-auto h-full">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 p-3 md:p-6">
 
-      {/* header */}
-      <div>
-        <h1 className="text-xl font-semibold">Profile</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Manage your personal information</p>
-      </div>
-
-      {/* info card */}
-      <Card className="p-5 rounded-2xl border bg-white dark:bg-muted shadow-sm">
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          {/* header */}
+          <div>
+            <h1 className="text-xl font-semibold">Profile</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Manage your personal information</p>
           </div>
-        ) : (
-          <div className="flex flex-col gap-5">
 
-            {/* avatar row */}
-            <div className="flex items-center gap-4">
-              <UserAvatar profile={profile} />
-              <div>
-                <p className="font-medium text-sm">
-                  {profile?.full_name || profile?.email?.split("@")[0] || "—"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">{profile?.email}</p>
+          {/* info card */}
+          <Card className="p-5 rounded-2xl border bg-white dark:bg-muted shadow-sm">
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-5">
 
-            <div className="h-px bg-border" />
+                {/* avatar row */}
+                <div className="flex items-center gap-4 min-w-0">
+                  <UserAvatar profile={profile} />
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {profile?.full_name || profile?.email?.split("@")[0] || "—"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{profile?.email}</p>
+                  </div>
+                </div>
 
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="fullName">Full name</FieldLabel>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="Ivan Petrenko"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </Field>
+                <div className="h-px bg-border" />
 
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  value={profile?.email ?? ""}
-                  disabled
-                  className="opacity-50 cursor-not-allowed"
-                />
-                <FieldDescription>Email cannot be changed</FieldDescription>
-              </Field>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="fullName">Full name</FieldLabel>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="Ivan Petrenko"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="w-full"
+                    />
+                  </Field>
 
-              {error && (
-                <Field>
-                  <p className="rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-500">{error}</p>
-                </Field>
-              )}
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={profile?.email ?? ""}
+                      disabled
+                      className="w-full opacity-50 cursor-not-allowed"
+                    />
+                    <FieldDescription>Email cannot be changed</FieldDescription>
+                  </Field>
 
-              {success && (
-                <Field>
-                  <p className="rounded-lg bg-green-500/10 px-3 py-2 text-xs text-green-600 flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Changes saved
-                  </p>
-                </Field>
-              )}
+                  {error && (
+                    <Field>
+                      <p className="rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-500">{error}</p>
+                    </Field>
+                  )}
 
-              <Field>
-                <Button type="button" onClick={handleSave} disabled={saving}>
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Save changes
-                </Button>
-              </Field>
-            </FieldGroup>
-          </div>
-        )}
-      </Card>
+                  {success && (
+                    <Field>
+                      <p className="rounded-lg bg-green-500/10 px-3 py-2 text-xs text-green-600 flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                        Changes saved
+                      </p>
+                    </Field>
+                  )}
 
+                  <Field>
+                    <Button type="button" onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
+                      {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Save changes
+                    </Button>
+                  </Field>
+                </FieldGroup>
+              </div>
+            )}
+          </Card>
+
+          <div className="pb-6" />
+        </div>
+      </div>
     </div>
   );
 }

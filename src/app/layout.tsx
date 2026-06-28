@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/src/components/theme-provider"; // ваш реальний шлях
 import "./globals.css";
 
 const inter = Inter({
@@ -23,11 +24,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    // suppressHydrationWarning — обов'язково, бо next-themes виставляє
+    // клас .dark/.light інлайн-скриптом ДО гідрації React, інакше React
+    // буде кричати про hydration mismatch на класі <html>
     <html
       lang="en"
-      className={`dark ${inter.variable} ${mono.variable} h-full antialiased`}
+      className={`${inter.variable} ${mono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
