@@ -5,7 +5,7 @@ import { createSupabaseServer } from "@/src/lib/supabase/server";
 import { PLANS } from "@/src/config/plans";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-04-10",
+  apiVersion: "2026-06-24.dahlia",
 });
 
 export async function POST(req: NextRequest) {
