@@ -19,8 +19,6 @@ import { formatCurrency } from "@/src/features/transactions/components/form/curr
 import { DatePickerDialog } from "@/src/components/date-dialog";
 import type { DebtWithPayments, NewDebtInput } from "@/src/types/debts";
 
-// ── Confirm dialog ───────────────────────────────────────────────
-
 function ConfirmDialog({
   message,
   onConfirm,
@@ -52,8 +50,6 @@ function ConfirmDialog({
     </div>
   );
 }
-
-// ── Add / Edit debt dialog ───────────────────────────────────────
 
 function DebtFormDialog({
   initial,
@@ -105,9 +101,12 @@ function DebtFormDialog({
     onClose();
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[16px] leading-tight outline-none focus:ring-2 focus:ring-foreground/10";
+
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
         <div className="w-full max-w-sm rounded-2xl bg-background border border-border p-5 flex flex-col gap-4">
           <h2 className="text-base font-semibold">
             {isEdit ? "Редагування боргу" : "Новий борг"}
@@ -137,7 +136,7 @@ function DebtFormDialog({
             placeholder="Ім'я"
             value={personName}
             onChange={(e) => setPersonName(e.target.value)}
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/10"
+            className={inputClass}
           />
           <input
             placeholder="Сума"
@@ -145,13 +144,13 @@ function DebtFormDialog({
             inputMode="decimal"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/10"
+            className={inputClass}
           />
           <input
             placeholder="Опис (необов'язково)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/10"
+            className={inputClass}
           />
 
           <button
@@ -160,9 +159,7 @@ function DebtFormDialog({
             className="w-full flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-left hover:bg-muted transition-colors"
           >
             <CalendarIcon className="h-4 w-4 text-muted-foreground shrink-0" />
-            <span
-              className={dueDate ? "text-foreground" : "text-muted-foreground"}
-            >
+            <span className={dueDate ? "text-foreground" : "text-muted-foreground"}>
               {dueDate
                 ? dueDate.toLocaleDateString("uk-UA", {
                     day: "numeric",
@@ -214,8 +211,6 @@ function DebtFormDialog({
   );
 }
 
-// ── Add payment dialog ───────────────────────────────────────────
-
 function AddPaymentDialog({
   debt,
   onAdd,
@@ -250,8 +245,11 @@ function AddPaymentDialog({
     onClose();
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[16px] leading-tight outline-none focus:ring-2 focus:ring-foreground/10";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="w-full max-w-sm rounded-2xl bg-background border border-border p-5 flex flex-col gap-4">
         <div>
           <h2 className="text-base font-semibold">Погашення боргу</h2>
@@ -265,14 +263,14 @@ function AddPaymentDialog({
           inputMode="decimal"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/10"
+          className={inputClass}
           autoFocus
         />
         <input
           placeholder="Нотатка (необов'язково)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/10"
+          className={inputClass}
         />
         {error && (
           <p className="text-xs text-red-500 bg-red-500/10 rounded-xl px-3 py-2">
@@ -303,8 +301,6 @@ function AddPaymentDialog({
     </div>
   );
 }
-
-// ── Debt card ────────────────────────────────────────────────────
 
 function DebtCard({
   debt,
@@ -418,7 +414,6 @@ function DebtCard({
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex gap-1.5 px-4 pb-3">
         {debt.is_settled ? (
           <>
@@ -537,8 +532,6 @@ function DebtCard({
   );
 }
 
-// ── Column ───────────────────────────────────────────────────────
-
 function DebtColumn({
   title,
   icon,
@@ -576,11 +569,7 @@ function DebtColumn({
             {active.length}
           </span>
         </div>
-        <p
-          className={["text-sm font-semibold tabular-nums", accentClass].join(
-            " ",
-          )}
-        >
+        <p className={["text-sm font-semibold tabular-nums", accentClass].join(" ")}>
           {formatCurrency(totalRemaining)}
         </p>
       </div>
@@ -635,8 +624,6 @@ function DebtColumn({
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────
-
 export default function DebtsClient() {
   const {
     debts,
@@ -651,9 +638,7 @@ export default function DebtsClient() {
   } = useDebts();
   const [showAddDebt, setShowAddDebt] = useState(false);
   const [editTarget, setEditTarget] = useState<DebtWithPayments | null>(null);
-  const [paymentTarget, setPaymentTarget] = useState<DebtWithPayments | null>(
-    null,
-  );
+  const [paymentTarget, setPaymentTarget] = useState<DebtWithPayments | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
