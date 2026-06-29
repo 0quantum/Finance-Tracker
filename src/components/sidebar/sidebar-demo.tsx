@@ -10,6 +10,7 @@ import {
   IconHandStop,
   IconWallet,
   IconTrendingUp,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { supabase } from "@/src/lib/supabase/browser";
@@ -108,6 +109,11 @@ const links = [
     href: "/investment",
     icon: <IconTrendingUp className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
+  {
+  label: "Регулярні",
+  href: "/recurring",
+  icon: <IconRefresh className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
+},
 ];
 
 const accountLinks = [
