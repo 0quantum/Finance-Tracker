@@ -104,6 +104,8 @@ const handleSave = async () => {
 };
 
   return (
+    <div className="flex-1 overflow-y-auto scrollbar-none rounded-tl-2xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 p-3 md:p-6">
@@ -191,5 +193,7 @@ const handleSave = async () => {
         </div>
       </div>
     </div>
+    </div>
+
   );
 }

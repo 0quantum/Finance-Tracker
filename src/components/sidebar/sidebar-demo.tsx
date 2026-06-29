@@ -91,44 +91,35 @@ const links = [
   {
     label: "Dashboard",
     href: "/dashboard",
-    icon: (
-      <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconBrandTabler className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
     label: "Рахунки",
     href: "/accounts",
-    icon: (
-      <IconWallet className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconWallet className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
     label: "Борги",
     href: "/debts",
-    icon: (
-      <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconHandStop className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
     label: "Інвестиції",
     href: "/investment",
-    icon: (
-      <IconTrendingUp className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconTrendingUp className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
+];
+
+const accountLinks = [
   {
     label: "Профіль",
     href: "/profile",
-    icon: (
-      <IconUserBolt className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconUserBolt className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
   {
     label: "Налаштування",
     href: "/settings",
-    icon: (
-      <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />
-    ),
+    icon: <IconSettings className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />,
   },
 ];
 export default function SidebarDemo() {
@@ -165,11 +156,19 @@ export default function SidebarDemo() {
           {open ? <Logo /> : <LogoIcon />}
 
           <div className="mt-8 flex flex-col gap-2">
-            {links.map((link, idx) => (
-              <SidebarLink key={idx} link={link} />
-            ))}
-            <LogoutButton />
-          </div>
+  {links.map((link, idx) => (
+    <SidebarLink key={idx} link={link} />
+  ))}
+
+  {/* розділювач */}
+  <div className="my-2 border-t border-neutral-200 dark:border-neutral-700" />
+
+  {accountLinks.map((link, idx) => (
+    <SidebarLink key={idx} link={link} />
+  ))}
+
+  <LogoutButton />
+</div>
         </div>
 
         <SidebarLink

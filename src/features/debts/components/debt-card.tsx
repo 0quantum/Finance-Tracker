@@ -126,85 +126,83 @@ export function DebtCard({
         </div>
       </div>
 
-      <div className="flex gap-1.5 px-4 pb-3">
-        {debt.is_settled ? (
-          <>
-            <button
-              onClick={async () => {
-                setReopening(true);
-                await onReopen(debt.id);
-                setReopening(false);
-              }}
-              disabled={reopening}
-              className="flex-1 rounded-xl border border-border py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
-            >
-              {reopening ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <RotateCcw className="h-3 w-3" />
-              )}
-              Відновити
-            </button>
-            <button
-              onClick={() => onEdit(debt)}
-              aria-label="Редагувати борг"
-              title="Редагувати"
-              className="h-8 w-8 shrink-0 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              <Pencil className="h-3 w-3" />
-            </button>
-            <button
-              onClick={() => onDelete(debt.id)}
-              aria-label="Видалити борг"
-              title="Видалити"
-              className="h-8 w-8 shrink-0 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
-            >
-              <Trash2 className="h-3 w-3" />
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => onAddPayment(debt)}
-              className="flex-1 rounded-xl border border-border py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1"
-            >
-              <Plus className="h-3 w-3" /> Погасити частково
-            </button>
-            <button
-              onClick={async () => {
-                setSettling(true);
-                await onSettle(debt.id);
-                setSettling(false);
-              }}
-              disabled={settling}
-              className="flex-1 rounded-xl bg-foreground text-background py-1.5 text-xs font-medium hover:opacity-90 transition-all flex items-center justify-center gap-1 disabled:opacity-50"
-            >
-              {settling ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <Check className="h-3 w-3" />
-              )}
-              Закрити
-            </button>
-            <button
-              onClick={() => onEdit(debt)}
-              aria-label="Редагувати борг"
-              title="Редагувати"
-              className="h-8 w-8 shrink-0 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              <Pencil className="h-3 w-3" />
-            </button>
-            <button
-              onClick={() => onDelete(debt.id)}
-              aria-label="Видалити борг"
-              title="Видалити"
-              className="h-8 w-8 shrink-0 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
-            >
-              <Trash2 className="h-3 w-3" />
-            </button>
-          </>
-        )}
+      {/* було: <div className="flex gap-1.5 px-4 pb-3"> */}
+<div className="grid grid-cols-[1fr_auto_auto] gap-1.5 px-4 pb-3">
+  {debt.is_settled ? (
+    <>
+      <button
+        onClick={async () => {
+          setReopening(true);
+          await onReopen(debt.id);
+          setReopening(false);
+        }}
+        disabled={reopening}
+        className="rounded-xl border border-border py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
+      >
+        {reopening ? <Loader2 className="h-3 w-3 animate-spin shrink-0" /> : <RotateCcw className="h-3 w-3 shrink-0" />}
+        Відновити
+      </button>
+      <button
+        onClick={() => onEdit(debt)}
+        aria-label="Редагувати борг"
+        title="Редагувати"
+        className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+      >
+        <Pencil className="h-3 w-3" />
+      </button>
+      <button
+        onClick={() => onDelete(debt.id)}
+        aria-label="Видалити борг"
+        title="Видалити"
+        className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
+      >
+        <Trash2 className="h-3 w-3" />
+      </button>
+    </>
+  ) : (
+    <>
+      {/* два текстових кнопки — власна підсітка */}
+      <div className="grid grid-cols-2 gap-1.5">
+        <button
+          onClick={() => onAddPayment(debt)}
+          className="rounded-xl border border-border py-1.5 text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-1 whitespace-nowrap"
+        >
+          <Plus className="h-3 w-3 shrink-0" />
+<span className="sm:hidden">Погасити</span>
+<span className="hidden sm:inline">Погасити частково</span>
+        </button>
+        <button
+          onClick={async () => {
+            setSettling(true);
+            await onSettle(debt.id);
+            setSettling(false);
+          }}
+          disabled={settling}
+          className="rounded-xl bg-foreground text-background py-1.5 text-xs font-medium hover:opacity-90 transition-all flex items-center justify-center gap-1 disabled:opacity-50 whitespace-nowrap"
+        >
+          {settling ? <Loader2 className="h-3 w-3 animate-spin shrink-0" /> : <Check className="h-3 w-3 shrink-0" />}
+          Закрити
+        </button>
       </div>
+      <button
+        onClick={() => onEdit(debt)}
+        aria-label="Редагувати борг"
+        title="Редагувати"
+        className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+      >
+        <Pencil className="h-3 w-3" />
+      </button>
+      <button
+        onClick={() => onDelete(debt.id)}
+        aria-label="Видалити борг"
+        title="Видалити"
+        className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
+      >
+        <Trash2 className="h-3 w-3" />
+      </button>
+    </>
+  )}
+</div>
 
       {debt.payments.length > 0 && (
         <div className="border-t border-border/50">

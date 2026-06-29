@@ -124,7 +124,7 @@ export function EditTransactionRow({
         <p className="text-[10px] text-muted-foreground mt-0.5">{time}</p>
       </div>
       <p className="shrink-0 text-xs font-semibold tabular-nums">${tx.amount.toFixed(2)}</p>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<div className="flex items-center gap-1 opacity-100 md:opacity-100 md:group-hover:opacity-100 transition-opacity">
         <button
   onClick={() => setEditing(true)}
   aria-label="Редагувати транзакцію"
