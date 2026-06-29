@@ -1,7 +1,7 @@
 "use client";
 
 import { Lock, Sparkles } from "lucide-react";
-import { useSubscription } from "@/src/features/billing/hooks/use-subscription";
+import { useSubscription } from "@/src/features/settings/billing/hooks/use-subscription";
 import { useRouter } from "next/navigation";
 
 interface PaywallGuardProps {
@@ -11,7 +11,11 @@ interface PaywallGuardProps {
   inline?: boolean;
 }
 
-export function PaywallGuard({ feature, children, inline = false }: PaywallGuardProps) {
+export function PaywallGuard({
+  feature,
+  children,
+  inline = false,
+}: PaywallGuardProps) {
   const { can, loading } = useSubscription();
   const router = useRouter();
 
@@ -21,7 +25,9 @@ export function PaywallGuard({ feature, children, inline = false }: PaywallGuard
   if (inline) {
     return (
       <div className="relative">
-        <div className="pointer-events-none select-none opacity-40 blur-[1px]">{children}</div>
+        <div className="pointer-events-none select-none opacity-40 blur-[1px]">
+          {children}
+        </div>
         <button
           onClick={() => router.push("/settings/billing")}
           className="absolute inset-0 flex items-center justify-center gap-2 rounded-2xl bg-background/80 backdrop-blur-sm border border-border/60 text-sm font-medium hover:bg-muted transition-colors"
